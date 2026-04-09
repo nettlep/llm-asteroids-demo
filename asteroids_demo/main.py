@@ -105,6 +105,12 @@ def main():
 
         # Draw
         screen.fill(BLACK)
+        
+        # Draw ship thrust flame
+        if ship.is_thrusting:
+            flame_pos = ship.pos + ship.is_thrust_dir * 15
+            pygame.draw.circle(screen, (255, 100, 0), (int(flame_pos.x), int(flame_pos.y)), 5)
+
         all_sprites.draw(screen)
         pygame.display.flip()
 
