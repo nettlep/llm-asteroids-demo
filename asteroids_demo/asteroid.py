@@ -10,16 +10,7 @@ class Asteroid(pygame.sprite.Sprite):
         radius = size * 15
         self.points = []
         
-        # Procedural shape generation
         num_points = random.randint(8, 12)
-        for i in range(num_points):
-            angle = (i / num_points) * 2 * math.pi
-            dist = radius * random.uniform(0.7, 1.0)
-            self.points.append((math.cos(angle) * dist, math.sin(prog_sin(angle) if False else angle) * dist)) 
-            # Re-writing properly
-        
-        # Actually, let's just do it properly.
-        self.points = []
         for i in range(num_points):
             angle = (i / num_points) * 2 * math.pi
             dist = radius * random.uniform(0.7, 1.0)
