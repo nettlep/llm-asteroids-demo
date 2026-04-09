@@ -1,15 +1,19 @@
 import pygame
 import random
-from .config import RED, WIDTH, HEIGHT
+from .config import WHITE, WIDTH, HEIGHT
 
 class Saucer(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        # Vector graphics style: Outline only
         self.image = pygame.Surface((50, 30), pygame.SRCALPHA)
-        # Draw a more "UFO-like" saucer
-        pygame.draw.ellipse(self.image, RED, [0, 10, 50, 15])
-        pygame.draw.ellipse(self.image, (200, 0, 0), [15, 0, 20, 15])
-        pygame.draw.circle(self.image, (100, 0, 0), (25, 10), 5)
+        # Draw a saucer outline
+        # Main body ellipse
+        pygame.draw.ellipse(self.image, WHITE, [0, 10, 50, 15], 1)
+        # Top dome
+        pygame.draw.ellipse(self.image, WHITE, [15, 0, 20, 15], 1)
+        # Cockpit
+        pygame.draw.circle(self.image, WHITE, (25, 10), 5, 1)
         
         self.pos = pygame.Vector2(random.randint(0, WIDTH), random.randint(0, HEIGHT))
         self.rect = self.image.get_rect(center=self.pos)

@@ -7,8 +7,14 @@ from .bullet import Bullet
 class Ship(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        # Ship is an outline of an isosceles triangle (back narrower by 15%)
+        # Original width was 30. New width at back: 30 * 0.85 = 25.5. 
+        # Vertices relative to top tip (0,0): (0,0), (12.75, 30), (-12.7s, 30)
+        # To center it, we offset x by 0.
         self.image = pygame.Surface((30, 30), pygame.SRCALPHA)
-        pygame.draw.polygon(self.image, WHITE, [(15, 0), (30, 30), (0, 30)])
+        self.points = [(15, 0), (27.75, 30), (2.25, 30)]
+        pygame.draw.polygon(self.image, WHITE, self.points, 1)
+        
         self.original_image = self.image.copy()
         self.rect = self.image.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         self.pos = pygame.Vector2(WIDTH // 2, HEIGHT // 2)
@@ -18,8 +24,9 @@ class Ship(pygame.sprite.Sprite):
         self.acceleration = 0.2
         self.friction = 0.99
         self.last_shot_time = 0
-        self.shoot_delay = 400 
+        self.shoot_delay = 100 
         self.is_thrusting = False
+        self.is_thrust_dir = pygame.Vector2(0, 0)
 
     def respawn(self):
         self.pos = pygame.Vector2(random.randint(0, WIDTH), random.randint(0, HEIGHT))
@@ -52,16 +59,17 @@ class Ship(pygame.sprite.Sprite):
         
         self.rect.center = self.pos
         self.image = pygame.transform.rotate(self.original_image, self.angle)
-        self.rect = self.padding_rect(self.image, self.pos)
-
-    def padding_rect(self, image, pos):
-        rect = image.get_rect(center=pos)
-        return rect
+        self.rect = self.image.get_rect(center=self.pos)
 
     def shoot_logic(self):
-        now = pygame.time.get_ticks()
-        if now - self.last_shot_time > self.shoot_delay:
-            direction = pygame.Vector2(0, -1).rotate(-self.angle)
-            self.last_shot_time = now
-            return Bullet(self.pos, direction)
+        if random.random() < 0.05:
+            now = pygame.time.get_ticks()
+            if now - self.last_shot_time > self.shoot_delay:
+                direction = pygame.Vector2(0, -1).rotate(-self.rel_angle())
+                self.last_shot_time = now
+                return Bullet(self.pos, direction)
         return None
+
+    def rel_angle(self):
+        # Return angle in a way that matches Bullet direction calculation
+        return self.angle

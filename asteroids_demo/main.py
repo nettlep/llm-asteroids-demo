@@ -1,6 +1,6 @@
 import pygame
 import random
-from .config import WIDTH, HEIGHT, FPS, BLACK, WHITE, RED
+from .config import WIDTH, HEIGHT, FPS, BLACK, WHITE
 from .ship import Ship
 from .asteroid import Asteroid
 from .bullet import Bullet
@@ -10,7 +10,7 @@ from .fragment import Fragment
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Asteroids Self-Running Demo")
+    pygame.display.set_caption("Asteroids Self-Running Demo (Vector Style)")
     clock = pygame.time.Clock()
 
     all_sprites = pygame.sprite.Group()
@@ -106,10 +106,18 @@ def main():
         # Draw
         screen.fill(BLACK)
         
-        # Draw ship thrust flame
+        # Draw ship thrust flame (Vector style: outline triangle)
         if ship.is_thrusting:
-            flame_pos = ship.pos + ship.is_thrust_dir * 15
-            pygame.draw.circle(screen, (255, 100, 0), (int(flame_pos.x), int(flame_pos.y)), 5)
+            # A smaller triangle pointing opposite to thrust direction
+            flame_points = []
+            # Flame tip is at ship pos + thrust dir * small distance
+            tip = ship.pos + ship.is_thrust_dir * 10
+            # Base of flame at ship pos
+            base_offset = 5
+            p2 = ship.pos + pygame.Vector2(base_offset, -base_offset).rotate(-ship.angle)
+            p3 = ship.pos + pygame.Vector2(-base_offset, -base_offset).rotate(-ship.angle)
+            flame_points = [tip, p2, p3]
+            pygame.draw.polygon(screen, WHITE, flame_points, 1)
 
         all_sprites.draw(screen)
         pygame.display.flip()
