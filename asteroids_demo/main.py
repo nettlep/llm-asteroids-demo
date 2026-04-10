@@ -80,7 +80,7 @@ def main():
         # Collision: Bullets vs Saucer
         pygame.sprite.groupcollide(saucers, bullets, True, True)
 
-        # Collision: Asteroids vs Saucer (UFO destruction)
+        # Collision: Asteroids vs Saucer (UF0 destruction)
         for s in saucers:
             if pygame.sprite.spritecollideany(s, asteroids):
                 s.kill()
@@ -108,16 +108,38 @@ def main():
         
         # Draw ship thrust flame (Vector style: outline triangle)
         if ship.is_thrusting:
-            # A smaller triangle pointing opposite to thrust direction
-            flame_points = []
-            # Flame tip is at ship pos + thrust dir * small distance
-            tip = ship.pos + ship.is_thrust_dir * 10
-            # Base of flame at ship pos
-            base_offset = 5
-            p2 = ship.pos + pygame.Vector2(base_offset, -base_offset).rotate(-ship.angle)
-            p3 = ship.pos + pygame.Vector2(-base_offset, -base_offset).rotate(-ship.angle)
-            flame_points = [tip, p2, p3]
-            pygame.draw.polygon(screen, WHITE, flame_points, 1)
+            # The flame should be at the BACK of the ship.
+            # The ship's points are relative to (15, 0) as the tip.
+            # The back of the ship is the line from (27.75, 30) to (2.25, 30).
+            # We want the flame to originate from this back edge and point backwards.
+            
+            # Let's find the back center point in world space.
+            # The ship's rotation is around its center.
+            # We need to rotate the relative back center point.
+            
+            # Relative back center: (15, 30)
+            # But the ship's image is 30x30, so the center is (15, 15).
+            # The back edge is at y=30. Relative to center, that's (0, 15).
+            
+            back_center_rel = pygame.Vector2(0, 15)
+            back_center_world = ship.pos + back_center_rel.rotate(-ship.angle)
+            
+            # Thrust direction is pointing away from the ship (backwards).
+            # The ship's thrust direction is already calculated in ship.py as 'direction'
+            # which is (0, -1).rotate(-ship.angle)
+            
+            thrust_dir = pygame.Vector2(0, 1).rotate(-ship.angle) # Opposite of ship heading
+            
+            # Flame is a smaller triangle pointing backwards.
+            # Tip of flame: back_center + thrust_dir * 10
+            # Base of flame: back_center + some width
+            
+            tip = back_center_world + thrust_dir * 10
+            base_width = 5
+            p2 = back_center_world + pygame.Vector2(base_width, 0).rotate(-ship.angle)
+            p3 = back_center_world + pygame.Vector2(-base_width, 0).rotate(-ship.angle)
+            
+            pygame.draw.polygon(screen, WHITE, [tip, p2, p3], 1)
 
         all_sprites.draw(screen)
         pygame.display.flip()
