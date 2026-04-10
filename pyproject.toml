@@ -1,0 +1,9 @@
+[project]
+name = "LLM Asteroids Demo"
+version = "0.1.0"
+description = "A high-fidelity, self-running simulation of the classic Asteroids arcade experience, rendered with a retro vector-graphics aesthetic."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pygame>=2.6.1",
+]
